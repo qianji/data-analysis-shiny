@@ -26,6 +26,26 @@ shinyServer(function(input, output) {
       data <- data[data$RankPos == input$rankPos,]
     }
     data
-  })
+  }, 
+  
+  #options = list (bSortClasses = TRUE)  
+
+  options = list(fnRowCallback = I('
+  function(nRow, aData,iDisplayIndex, iDisplayIndexFull) {
+    // Bold cells for those >= 5 in the first column
+    if (parseFloat(aData[14]) <= 3.0)
+      $("td:eq(14)", nRow).css("color", "Green");
+    else if (parseFloat(aData[14]) <= 6.0)
+      $("td:eq(14)", nRow).css("color", "Yellow");
+    else if (parseFloat(aData[14]) <= 9.0)
+      $("td:eq(14)", nRow).css("color", "Blue");
+    else 
+      $("td:eq(14)", nRow).css("color", "Red");
+
+
+  }'
+  ))
+  
+  )
   
 })
