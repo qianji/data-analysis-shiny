@@ -1,83 +1,94 @@
 library(shiny)
 
-# Load the ggplot2 package which provides
-# the 'mpg' dataset.
-library(ggplot2)
-
-#load data
-d  <- load('data/subsector_sum.Rdata')
-industry_sum <- get(d[1])
-#industry_sum <- reactive(get(load('data/industry_sum.Rdata'))[1])
-# Define the overall UI
 shinyUI(
-
-  fluidPage(
-    titlePanel("Data Analysis"),
-
-    # side bar of the page
-    sidebarPanel(
-      conditionalPanel(
-        'input.dataset === "INDUS"',
-        selectInput("industry_indus", 
-                      "INDUS:", 
-                      c("All", 
-                        unique(as.character(industry_sum$INDUS))))
-      ),
-      conditionalPanel(
-        'input.dataset === "SUB.SEC"',
-            selectInput("sub_indus", 
-                        "INDUS:", 
-                        c("All", 
-                          unique(as.character(industry_sum$INDUS)))),
-            selectInput("sub_sup_sec", 
-                        "SUP.SEC:", 
-                        c("All", 
-                          unique(as.character(industry_sum$SUP.SEC)))),
-            selectInput("sub_sec", 
-                        "SEC", 
-                        c("All", 
-                          unique(as.character(industry_sum$SEC)))),
-            selectInput("sub_sub_sec", 
-                        "SUB.SEC", 
-                        c("All", 
-                          unique(as.character(industry_sum$SUB.SEC))))
-
-      ),
-      conditionalPanel(
-        'input.dataset === "SUP.SEC"',
-            selectInput("sup_indus", 
-                        "INDUS:", 
-                        c("All", 
-                          unique(as.character(industry_sum$INDUS)))),
-            selectInput("sup_sup_sec", 
-                        "SUP.SEC:", 
-                        c("All", 
-                          unique(as.character(industry_sum$SUP.SEC))))
-
-      ),
-
-      conditionalPanel(
-        'input.dataset === "SEC"',
-            selectInput("sec_indus", 
-                        "INDUS:", 
-                        c("All", 
-                          unique(as.character(industry_sum$INDUS)))),
-            selectInput("sec_sup_sec", 
-                        "SUP.SEC:", 
-                        c("All", 
-                          unique(as.character(industry_sum$SUP.SEC)))),
-            selectInput("sec_sec", 
-                        "SEC", 
-                        c("All", 
-                          unique(as.character(industry_sum$SEC))))
-
-      )
-
-      
-    ),
-
-    mainPanel(tabsetPanel(id='dataset',tabPanel('INDUS',dataTableOutput('industry')), tabPanel('SUP.SEC',dataTableOutput('sup_sec')), tabPanel('SEC',dataTableOutput('sec')),tabPanel('SUB.SEC',dataTableOutput('sub_sec')) ))
-    
- 
-  )  
+  navbarPage("Groups",
+             tabPanel("NYSE",
+                      conditionalPanel("input.nysetabset == 'INDUSTRY'",
+                                       fluidRow(column(6,uiOutput("nyse_industry_menu")))),
+                      conditionalPanel("input.nysetabset == 'SUPER'",
+                                       fluidRow(column(6,uiOutput("nyse_sup_indus")),
+                                                column(6,uiOutput("nyse_sup_sup")))),
+                      conditionalPanel("input.nysetabset == 'SECTOR'",
+                                       fluidRow(column(4,uiOutput("nyse_sec_indus")),
+                                                column(4,uiOutput("nyse_sec_sup")),
+                                                column(4,uiOutput("nyse_sec_sec")))),
+                      conditionalPanel("input.nysetabset == 'SUBSECTOR'",
+                                       fluidRow(column(3,uiOutput("nyse_sub_indus")),
+                                                column(3,uiOutput("nyse_sub_sup")),
+                                                column(3,uiOutput("nyse_sub_sec")),
+                                                column(3,uiOutput("nyse_sub_sub")))),
+                      
+                      fluidRow(column(12,
+                                      mainPanel(tabsetPanel(id='nysetabset',
+                                                            tabPanel('INDUSTRY',dataTableOutput('industry')), 
+                                                            tabPanel('SUPER',dataTableOutput('sup_sec')), 
+                                                            tabPanel('SECTOR',dataTableOutput('sec')),
+                                                            tabPanel('SUBSECTOR',dataTableOutput('sub_sec'))),
+                                                width=12))),
+                      icon=icon("table")),
+             
+             #####################################
+             tabPanel("NASDAQ",
+                      conditionalPanel("input.nasdaqtabset == 'INDUSTRY'",
+                                       fluidRow(column(6,uiOutput("nasdaq_industry_menu")))),
+                      conditionalPanel("input.nasdaqtabset == 'SECTOR'",
+                                       fluidRow(column(6,uiOutput("nasdaq_sec_indus")),
+                                                column(6,uiOutput("nasdaq_sec_sec")))),                      
+                      fluidRow(column(12,
+                                      mainPanel(tabsetPanel(id='nasdaqtabset',
+                                                            tabPanel('INDUSTRY',
+                                                                     dataTableOutput('nasdaq_industry')), 
+                                                            tabPanel('SECTOR',
+                                                                     dataTableOutput('nasdaq_sec'))),
+                                                width=12))),
+                      icon=icon("table")),
+             
+             #####################################
+             tabPanel("Special",
+                      
+                      conditionalPanel("input.specialtabset == 'INDUSTRY'",
+                                       fluidRow(column(6,uiOutput("special_industry_menu")))),
+                      conditionalPanel("input.specialtabset == 'SUPERSECTOR'",
+                                       fluidRow(column(6,uiOutput("special_sup_indus")),
+                                                column(6,uiOutput("special_sup_sup")))),
+                      conditionalPanel("input.specialtabset == 'SECTOR'",
+                                       fluidRow(column(4,uiOutput("special_sec_indus")),
+                                                column(4,uiOutput("special_sec_sup")),
+                                                column(4,uiOutput("special_sec_sec")))),
+                      conditionalPanel("input.specialtabset == 'SUBSECTOR'",
+                                       fluidRow(column(3,uiOutput("special_sub_indus")),
+                                                column(3,uiOutput("special_sub_sup")),
+                                                column(3,uiOutput("special_sub_sec")),
+                                                column(3,uiOutput("special_sub_sub")))),
+                      
+                      fluidRow(column(12,
+                                      mainPanel(tabsetPanel(id='specialtabset',
+                                                            tabPanel('INDUSTRY',
+                                                                     dataTableOutput('special_industry')), 
+                                                            tabPanel('SUPERSECTOR',
+                                                                     dataTableOutput('special_sup_sec')), 
+                                                            tabPanel('SECTOR',
+                                                                     dataTableOutput('special_sec')), 
+                                                            tabPanel('SUBSECTOR',
+                                                                     dataTableOutput('special_subsec_table'))),
+                                                width=12))),                      
+                      icon=icon('table')),
+             
+             #####################################
+             header=NULL,
+             footer=NULL,
+             fluid=TRUE,
+             inverse=TRUE,
+             collapsable=FALSE,
+             responsive=TRUE,
+             #theme="css/style.css",
+             navbarMenu("Modes",
+                        tabPanel("Snapshot",icon=icon("camera")),
+                        tabPanel("Trend",icon=icon("align-left")),
+                        tabPanel("Rotation",icon=icon("refresh")),
+                        tabPanel("Plots",icon=icon("bar-chart-o"))
+             )
+             
+             
+  )  # navbar page
 )
