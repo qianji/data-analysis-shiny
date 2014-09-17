@@ -44,6 +44,21 @@ shinyUI(
                       icon=icon("table")),
              
              #####################################
+             tabPanel("ETPs",
+                      conditionalPanel("input.etptabset == 'NORMAL'",
+                                       fluidRow(column(6,uiOutput("etp_normal_menu")))),
+                      conditionalPanel("input.etptabset == 'INVERSE'",
+                                       fluidRow(column(6,uiOutput("etp_inverse_menu")))),                      
+                      fluidRow(column(12,
+                                      mainPanel(tabsetPanel(id='etptabset',
+                                                            tabPanel('NORMAL',
+                                                                     dataTableOutput('etp_normal')), 
+                                                            tabPanel('INVERSE',
+                                                                     dataTableOutput('etp_inverse'))),
+                                                width=12))),
+                      icon=icon("table")),
+             
+             #####################################
              tabPanel("Special",
                       
                       conditionalPanel("input.specialtabset == 'INDUSTRY'",
