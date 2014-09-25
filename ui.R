@@ -20,20 +20,29 @@ shinyUI(
                       
                       fluidRow(column(12,
                                       mainPanel(tabsetPanel(id='nysetabset',
-                                                            tabPanel('INDUSTRY',dataTableOutput('industry')), 
-                                                            tabPanel('SUPER',dataTableOutput('sup_sec')), 
-                                                            tabPanel('SECTOR',dataTableOutput('sec')),
-                                                            tabPanel('SUBSECTOR',dataTableOutput('sub_sec')),
+                                                            tabPanel('INDUSTRY',dataTableOutput('industry'),
+                                                                     icon=icon("table")), 
+                                                            tabPanel('SUPER',dataTableOutput('sup_sec'),
+                                                                     icon=icon("table")), 
+                                                            tabPanel('SECTOR',dataTableOutput('sec'),
+                                                                     icon=icon("table")),
+                                                            tabPanel('SUBSECTOR',dataTableOutput('sub_sec'),
+                                                                     icon=icon("table")),
                                                             tabPanel('HIGHS/LOWS', 
                                                                      fluidRow(column(12,plotOutput('nyse_new_highs'))),
                                                                      fluidRow(column(12,plotOutput('nyse_new_lows'))),
-                                                                     fluidRow(column(12,plotOutput('nyse_index')))),
+                                                                     fluidRow(column(12,plotOutput('nyse_index'))),
+                                                                     icon=icon("bar-chart-o")),
                                                             tabPanel('INDEX', 
-                                                                     fluidRow(column(12,plotOutput('nyse_index_solo'))))
+                                                                     fluidRow(column(12,plotOutput('nyse_index_solo'))),
+                                                                     icon=icon("bar-chart-o")),
+                                                            tabPanel('MAP',
+                                                                     dataTableOutput('nyse_map'),
+                                                                     icon=icon("list"))
                                       ),
                                                 
                                                 width=12))),
-                      icon=icon("table")),
+                      icon=icon("building-o")),
              
              #####################################
              tabPanel("NASDAQ",
@@ -45,18 +54,25 @@ shinyUI(
                       fluidRow(column(12,
                                       mainPanel(tabsetPanel(id='nasdaqtabset',
                                                             tabPanel('INDUSTRY',
-                                                                     dataTableOutput('nasdaq_industry')), 
+                                                                     dataTableOutput('nasdaq_industry'),
+                                                                     icon=icon("table")), 
                                                             tabPanel('SECTOR',
-                                                                     dataTableOutput('nasdaq_sec')),
+                                                                     dataTableOutput('nasdaq_sec'),
+                                                                     icon=icon("table")),
                                                             tabPanel('HIGHS/LOWS', 
                                                                      fluidRow(column(12,plotOutput('nasdaq_new_highs'))),
                                                                      fluidRow(column(12,plotOutput('nasdaq_new_lows'))),
-                                                                     fluidRow(column(12,plotOutput('nasdaq_index')))),
+                                                                     fluidRow(column(12,plotOutput('nasdaq_index'))),
+                                                                     icon=icon("bar-chart-o")),
                                                             tabPanel('INDEX', 
-                                                                     fluidRow(column(12,plotOutput('nasdaq_index_solo'))))
+                                                                     fluidRow(column(12,plotOutput('nasdaq_index_solo'))),
+                                                                     icon=icon("bar-chart-o")),
+                                                            tabPanel('MAP',
+                                                                     dataTableOutput('nasdaq_map'),
+                                                                     icon=icon("list"))
                                                             ),
                                                 width=12))),
-                      icon=icon("table")),
+                      icon=icon("building-o")),
              
              #####################################
              tabPanel("ETPs",
@@ -67,11 +83,17 @@ shinyUI(
                       fluidRow(column(12,
                                       mainPanel(tabsetPanel(id='etptabset',
                                                             tabPanel('NORMAL',
-                                                                     dataTableOutput('etp_normal')), 
+                                                                     dataTableOutput('etp_normal'),
+                                                                     icon=icon("table")), 
                                                             tabPanel('INVERSE',
-                                                                     dataTableOutput('etp_inverse'))),
+                                                                     dataTableOutput('etp_inverse'),
+                                                                     icon=icon("table")),
+                                                            tabPanel('MAP',
+                                                                     dataTableOutput('etp_map'),
+                                                                     icon=icon("list"))
+                                                            ),
                                                 width=12))),
-                      icon=icon("table")),
+                      icon=icon("exchange")),
              
              #####################################
              tabPanel("Special",
@@ -94,15 +116,22 @@ shinyUI(
                       fluidRow(column(12,
                                       mainPanel(tabsetPanel(id='specialtabset',
                                                             tabPanel('INDUSTRY',
-                                                                     dataTableOutput('special_industry')), 
+                                                                     dataTableOutput('special_industry'),
+                                                                     icon=icon("table")), 
                                                             tabPanel('SUPERSECTOR',
-                                                                     dataTableOutput('special_sup_sec')), 
+                                                                     dataTableOutput('special_sup_sec'),
+                                                                     icon=icon("table")), 
                                                             tabPanel('SECTOR',
-                                                                     dataTableOutput('special_sec')), 
+                                                                     dataTableOutput('special_sec'),
+                                                                     icon=icon("table")), 
                                                             tabPanel('SUBSECTOR',
-                                                                     dataTableOutput('special_subsec_table'))),
+                                                                     dataTableOutput('special_subsec_table')),
+                                                            tabPanel('MAP',
+                                                                     dataTableOutput('special_map'),
+                                                                     icon=icon("list"))
+                                                            ),
                                                 width=12))),                      
-                      icon=icon('table')),
+                      icon=icon('flask')),
              
              #####################################
              header=NULL,
@@ -115,8 +144,8 @@ shinyUI(
              navbarMenu("Modes",
                         tabPanel("Snapshot",icon=icon("camera")),
                         tabPanel("Trend",icon=icon("align-left")),
-                        tabPanel("Rotation",icon=icon("refresh")),
-                        tabPanel("Plots",icon=icon("bar-chart-o"))
+                        tabPanel("Rotation",icon=icon("refresh"))
+                        # tabPanel("Plots",icon=icon("bar-chart-o"))
              )
              
              

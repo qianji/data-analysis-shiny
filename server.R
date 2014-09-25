@@ -315,6 +315,12 @@ shinyServer(function(input, output, session) {
   }
   )
   
+  # NYSE map
+  output$nyse_map <- renderDataTable({
+    load_dataset()
+    dataset$nyse_map
+  })
+  
   ####### NASDAQ industry
   output$nasdaq_industry_menu <- renderUI({
     load_dataset()
@@ -393,6 +399,13 @@ shinyServer(function(input, output, session) {
   }
   )
   
+  # NASDAQ map
+  output$nasdaq_map <- renderDataTable({
+    load_dataset()
+    dataset$nasdaq_map
+  })
+  
+  
   ##### ETPs
   
   ####### ETP normal
@@ -438,6 +451,12 @@ shinyServer(function(input, output, session) {
     data
   }
   )
+  
+  # ETF/ETP map
+  output$etp_map <- renderDataTable({
+    load_dataset()
+    dataset$etf_map
+  })
   
   
   ##### SPECIAL
@@ -712,6 +731,13 @@ shinyServer(function(input, output, session) {
     data
   }
   )
+  
+  # special map
+  output$special_map <- renderDataTable({
+    load_dataset()
+    dataset$special_map
+  })
+  
   
   
 })
