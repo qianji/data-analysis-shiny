@@ -23,7 +23,15 @@ shinyUI(
                                                             tabPanel('INDUSTRY',dataTableOutput('industry')), 
                                                             tabPanel('SUPER',dataTableOutput('sup_sec')), 
                                                             tabPanel('SECTOR',dataTableOutput('sec')),
-                                                            tabPanel('SUBSECTOR',dataTableOutput('sub_sec'))),
+                                                            tabPanel('SUBSECTOR',dataTableOutput('sub_sec')),
+                                                            tabPanel('HIGHS/LOWS', 
+                                                                     fluidRow(column(12,plotOutput('nyse_new_highs'))),
+                                                                     fluidRow(column(12,plotOutput('nyse_new_lows'))),
+                                                                     fluidRow(column(12,plotOutput('nyse_index')))),
+                                                            tabPanel('INDEX', 
+                                                                     fluidRow(column(12,plotOutput('nyse_index_solo'))))
+                                      ),
+                                                
                                                 width=12))),
                       icon=icon("table")),
              
@@ -39,7 +47,14 @@ shinyUI(
                                                             tabPanel('INDUSTRY',
                                                                      dataTableOutput('nasdaq_industry')), 
                                                             tabPanel('SECTOR',
-                                                                     dataTableOutput('nasdaq_sec'))),
+                                                                     dataTableOutput('nasdaq_sec')),
+                                                            tabPanel('HIGHS/LOWS', 
+                                                                     fluidRow(column(12,plotOutput('nasdaq_new_highs'))),
+                                                                     fluidRow(column(12,plotOutput('nasdaq_new_lows'))),
+                                                                     fluidRow(column(12,plotOutput('nasdaq_index')))),
+                                                            tabPanel('INDEX', 
+                                                                     fluidRow(column(12,plotOutput('nasdaq_index_solo'))))
+                                                            ),
                                                 width=12))),
                       icon=icon("table")),
              

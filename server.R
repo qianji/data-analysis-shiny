@@ -1,7 +1,9 @@
 
 library(shiny)
 library(dplyr)
-library(ggplot2)
+library(lattice)
+# library(gridExtra)
+# library(ggplot2)
 
 # constants
 DECIMALS <- 2
@@ -47,6 +49,54 @@ shinyServer(function(input, output, session) {
       data <- filter(data,INDUS %in% input$nyse_industry_menu)
     }
     data
+  })
+  
+  # NYSE new highs from exchange data, complete plot object
+  output$nyse_new_highs <- renderPlot({
+    load_dataset()
+    dataset$nyse_new_highs
+  })
+
+  # NYSE new lows from exchange data, complete plot object
+  output$nyse_new_lows <- renderPlot({
+    load_dataset()
+    dataset$nyse_new_lows
+  })
+  
+  # NYSE index
+  output$nyse_index <- renderPlot({
+    load_dataset()
+    dataset$nyse_sma_index
+  })
+  
+  # NYSE index, separate plot
+  output$nyse_index_solo <- renderPlot({
+    load_dataset()
+    dataset$nyse_sma_index
+  })
+  
+  # NASDAQ new highs from exchange data, complete plot object
+  output$nasdaq_new_highs <- renderPlot({
+    load_dataset()
+    dataset$nasdaq_new_highs
+  })
+  
+  # NASDAQ new lows from exchange data, complete plot object
+  output$nasdaq_new_lows <- renderPlot({
+    load_dataset()
+    dataset$nasdaq_new_lows
+  })
+
+  # NASDAQ index
+  output$nasdaq_index <- renderPlot({
+    load_dataset()
+    dataset$nasdaq_sma_index
+  })
+  
+  # NASDAQ index, separate plot
+  output$nasdaq_index_solo <- renderPlot({
+    load_dataset()
+    dataset$nasdaq_sma_index
   })
   
   
