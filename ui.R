@@ -3,8 +3,8 @@ library(shiny)
 shinyUI(
   navbarPage("Groups",
              tabPanel("NYSE",
-#                       fluidRow(column(4,textOutput('analysis_date')),
-#                                column(4,textOutput('analysis_complete_time'))),
+                      fluidRow(column(8,''),
+                               column(4,textOutput('nyse_date'))),
                       
                       conditionalPanel("input.nysetabset == 'nyse_industry'",
                                        fluidRow(column(6,uiOutput("nyse_industry_menu")))),
@@ -58,8 +58,8 @@ shinyUI(
              
              #####################################
              tabPanel("NASDAQ",
-#                       fluidRow(column(4,textOutput('analysis_date')),
-#                                column(4,textOutput('analysis_complete_time'))),
+                      fluidRow(column(8,''),
+                               column(4,textOutput('nasdaq_date'))),
                       conditionalPanel("input.nasdaqtabset == 'nasdaq_industry'",
                                        fluidRow(column(6,uiOutput("nasdaq_industry_menu")))),
                       conditionalPanel("input.nasdaqtabset == 'nasdaq_sector'",
@@ -75,7 +75,7 @@ shinyUI(
                                                                      dataTableOutput('nasdaq_sec'),
                                                                      value="nasdaq_sector",
                                                                      icon=icon("table")),
-                                                            tabPanel('HIGHS-LOWS', 
+                                                            tabPanel('HIGHS/LOWS', 
                                                                      fluidRow(column(12,plotOutput('nasdaq_new_highs'))),
                                                                      fluidRow(column(12,plotOutput('nasdaq_new_lows'))),
                                                                      fluidRow(column(12,plotOutput('nasdaq_index'))),
@@ -92,8 +92,8 @@ shinyUI(
              
              #####################################
              tabPanel("ETPs",
-#                       fluidRow(column(4,textOutput('analysis_date')),
-#                                column(4,textOutput('analysis_complete_time'))),
+                       fluidRow(column(8,''),
+                                column(4,textOutput('etp_date'))),
                       conditionalPanel("input.etptabset == 'etp_normal'",
                                        fluidRow(column(6,uiOutput("etp_normal_menu")))),
                       conditionalPanel("input.etptabset == 'etp_inverse'",
@@ -102,6 +102,14 @@ shinyUI(
                                       mainPanel(tabsetPanel(id='etptabset',
                                                             tabPanel('NORMAL',
                                                                      dataTableOutput('etp_normal'),
+                                                                     fluidRow(h3("PSMF Trend")),
+                                                                     dataTableOutput('etp_normal_trend_psmf'),
+                                                                     #fluidRow(h3("Short Term Trend")),
+                                                                     #dataTableOutput('etp_normal_trend_short'),
+                                                                     #fluidRow(h3('Intermediate Term Trend')),
+                                                                     #dataTableOutput('etp_normal_trend_int'),
+                                                                     #fluidRow(h3('Long Term Trend')),
+                                                                     #dataTableOutput('etp_normal_trend_long'),
                                                                      value="etp_normal",
                                                                      icon=icon("table")), 
                                                             tabPanel('INVERSE',
@@ -117,8 +125,8 @@ shinyUI(
              
              #####################################
              tabPanel("Special",
-#                       fluidRow(column(4,textOutput('analysis_date')),
-#                                column(4,textOutput('analysis_complete_time'))),
+                       fluidRow(column(8,""),
+                                column(4,textOutput('special_date'))),
                       conditionalPanel("input.specialtabset == 'special_industry'",
                                        fluidRow(column(6,uiOutput("special_industry_menu")))),
                       conditionalPanel("input.specialtabset == 'special_supersector'",
@@ -161,8 +169,8 @@ shinyUI(
              
              ## setup
              tabPanel('Analysis',
-                      fluidRow(column(4,textOutput('analysis_date')),
-                               column(4,textOutput('analysis_complete_time'))),
+                      fluidRow(column(8,textOutput('analysis_complete_time')),
+                               column(4,textOutput('analysis_date'))),
                       fluidRow(column(12,h2('Insufficient History'))),
                       fluidRow(column(12,
                                       mainPanel(tabsetPanel(id='analysis_insufficient',
@@ -208,6 +216,9 @@ shinyUI(
                                                                      icon=icon("adjust"))
                                                             )))),
                       icon=icon('gear')),
+  tabPanel('Notes',
+           htmlOutput('note_text'),
+           icon=icon("paperclip")),
              
              #####################################
              header=NULL,

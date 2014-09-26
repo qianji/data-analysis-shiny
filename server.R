@@ -22,8 +22,6 @@ shinyServer(function(input, output, session) {
   output$nyse_industry_menu <- renderUI({
     load_dataset()
     d <- dataset$nyse_industry_sum
-    print("renderUI industry menu")
-    print(unique(as.character(d$INDUS)))
     selectInput("nyse_industry_menu", "Industry",
                 c("All", unique(as.character(d$INDUS))),
                 selected="All", selectize=FALSE, multiple=TRUE)
@@ -73,7 +71,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sup_indus <- renderUI({
     load_dataset()
     d <- dataset$nyse_supsector_sum
-    print("render UI nyse sup indus")
     selectInput("nyse_sup_indus", "Industry",
                 c("All", unique(as.character(d$INDUS))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -82,7 +79,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sup_sup <- renderUI({
     load_dataset()
     d <- dataset$nyse_supsector_sum
-    print("render UI nyse sup sup")
     selectInput("nyse_sup_sup", "Super Sector",
                 c("All", unique(as.character(d$SUP.SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -95,8 +91,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_supsector_sum
       d <- filter(d,INDUS==sup_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
-      print("observe nyse sup indus items")
-      print(items)
       updateSelectInput(session, "nyse_sup_sup", 
                         choices = items,selected=items[1]
       )
@@ -127,7 +121,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sec_indus <- renderUI({
     load_dataset()
     d <- dataset$nyse_sector_sum
-    print("render UI nyse sec indus")
     selectInput("nyse_sec_indus", "Industry",
                 c("All", unique(as.character(d$INDUS))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -136,7 +129,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sec_sup <- renderUI({
     load_dataset()
     d <- dataset$nyse_sector_sum
-    print("render UI nyse sec sup")
     selectInput("nyse_sec_sup", "Super Sector",
                 c("All", unique(as.character(d$SUP.SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -145,7 +137,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sec_sec <- renderUI({
     load_dataset()
     d <- dataset$nyse_sector_sum
-    print("render UI nyse sec sec")
     selectInput("nyse_sec_sec", "Sector",
                 c("All", unique(as.character(d$SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -158,8 +149,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_sector_sum
       d <- filter(d,INDUS==sec_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
-      print("observe nyse sec indus items")
-      print(items)
       updateSelectInput(session, "nyse_sec_sup", 
                         choices = items,selected=items[1]
       )
@@ -172,8 +161,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_sector_sum
       d <- d %>% filter(SUP.SEC==sec_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
-      print("observe nyse sec sup items")
-      print(items)
       updateSelectInput(session, "nyse_sec_sec", 
                         choices = items,selected=items[1]
       )
@@ -209,7 +196,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sub_indus <- renderUI({
     load_dataset()
     d <- dataset$nyse_subsector_sum
-    print("render UI nyse sub indus")
     selectInput("nyse_sub_indus", "Industry",
                 c("All", unique(as.character(d$INDUS))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -218,7 +204,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sub_sup <- renderUI({
     load_dataset()
     d <- dataset$nyse_subsector_sum
-    print("render UI nyse sub sup")
     selectInput("nyse_sub_sup", "Super Sector",
                 c("All", unique(as.character(d$SUP.SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -227,7 +212,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sub_sec <- renderUI({
     load_dataset()
     d <- dataset$nyse_subsector_sum
-    print("render UI nyse sub sec")
     selectInput("nyse_sub_sec", "Sector",
                 c("All", unique(as.character(d$SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -236,7 +220,6 @@ shinyServer(function(input, output, session) {
   output$nyse_sub_sub <- renderUI({
     load_dataset()
     d <- dataset$nyse_subsector_sum
-    print("render UI nyse sub sub")
     selectInput("nyse_sub_sub", "Sub Sector",
                 c("All", unique(as.character(d$SUB.SEC))),
                 selected="All", selectize=FALSE,multiple=TRUE)
@@ -249,8 +232,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_subsector_sum
       d <- filter(d,INDUS==sub_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
-      print("observe nyse sub indus items")
-      print(items)
       updateSelectInput(session, "nyse_sub_sup", 
                         choices = items,selected=items[1]
       )
@@ -263,8 +244,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_subsector_sum
       d <- d %>% filter(SUP.SEC==sub_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
-      print("observe nyse sub sup items")
-      print(items)
       updateSelectInput(session, "nyse_sub_sec", 
                         choices = items,selected=items[1]
       )
@@ -277,8 +256,6 @@ shinyServer(function(input, output, session) {
       d <- dataset$nyse_subsector_sum
       d <- d %>% filter(SEC==sub_sec_selection)
       items <- c("All",unique(as.character(d$SUB.SEC)))
-      print("observe nyse sub sec items")
-      print(items)
       updateSelectInput(session, "nyse_sub_sub", 
                         choices = items,selected=items[1]
       )
@@ -762,17 +739,8 @@ shinyServer(function(input, output, session) {
   })
   
   
-  # analysis history
-  output$analysis_date <- renderText({
-    load_dataset()
-    paste("Data update: ",dataset$update_date)
-  })
-  
-  output$analysis_complete_time <- renderText({
-    load_dataset()
-    paste("Completed: ",dataset$stop_time)
-  })
-  
+
+  # analysis tables
   output$insufficient_nyse <- renderDataTable({
     load_dataset()
     if ( nrow(dataset$nyse_insufficient) > 0 )
@@ -873,7 +841,108 @@ shinyServer(function(input, output, session) {
       rbind(d,NA)
   })
   
+  
+  ### report generation references
+  # analysis history
+  output$analysis_date <- renderText({
+    load_dataset()
+    paste("Data update: ",dataset$update_date)
+  })
+  
+  output$analysis_complete_time <- renderText({
+    load_dataset()
+    paste("Completed: ",dataset$stop_time)
+  })
+  
+  output$nyse_date <- renderText({
+    load_dataset()
+    paste("Data update: ",dataset$update_date)
+  })
+  
+  output$nasdaq_date <- renderText({
+    load_dataset()
+    paste("Data update: ",dataset$update_date)
+  })
+  
+  output$etp_date <- renderText({
+    load_dataset()
+    paste("Data update: ",dataset$update_date)
+  })
+  
+  output$special_date <- renderText({
+    load_dataset()
+    paste("Data update: ",dataset$update_date)
+  })
+  
+
+  ### trends
+  #rv = list(psmf=psmf.df,  psmfi=psmfi.df,
+  #          short=short.df,shorti=shorti.df,
+  #          inter=inter.df,interi=interi.df,
+  #          long=long.df,  longi=longi.df)
+  
+  # ETP PSMF trend
+  output$etp_normal_trend_psmf <- renderDataTable({
+    load_dataset()
+    d <- dataset$etf_normal_trends$psmf
+    if ( nrow(d) > 0 ) {
+      d <- cbind(rownames(d),d)
+      colnames(d)[1] <- "Group"
+      d
+    }
+    else
+      rbind(d,NA)
+  })
+  
+  # ETP short trend
+  output$etp_normal_trend_short <- renderDataTable({
+    load_dataset()
+    d <- dataset$etf_normal_trends$short
+    if ( nrow(d) > 0 ) {
+      d <- cbind(rownames(d),d)
+      colnames(d)[1] <- "Group"
+      d
+    }
+    else
+      rbind(d,NA)
+  })
+  
+  # ETP intermediate trend
+  output$etp_normal_trend_int <- renderDataTable({
+    load_dataset()
+    d <- dataset$etf_normal_trends$inter
+    if ( nrow(d) > 0 ) {
+      d <- cbind(rownames(d),d)
+      colnames(d)[1] <- "Group"
+      d
+    }
+    else
+      rbind(d,NA)
+  })
+  
+  # ETP long trend
+  output$etp_normal_trend_long <- renderDataTable({
+    load_dataset()
+    d <- dataset$etf_normal_trends$long
+    if ( nrow(d) > 0 ) {
+      d <- cbind(rownames(d),d)
+      colnames(d)[1] <- "Group"
+      d
+    }
+    else
+      rbind(d,NA)
+  })
+  
+  #### debugging
   output$debug <- renderText({
     input$nysetabset
+  })
+  
+  
+  # notes page
+  # read a markdown file and render as HTML
+  output$note_text <- renderText({
+    require(markdown,quietly=TRUE)
+    markdownToHTML("data/notes.md")
   })
 })
