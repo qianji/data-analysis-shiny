@@ -332,10 +332,12 @@ shinyUI(
                       htmlOutput('note_text'),
                       icon=icon("paperclip")),
              
+             #####################################
+             # logos, copyright, disclaimers for all pages
              
              wellPanel(
                fluidRow(column(4,imageOutput("logo",height="75px"),offset=4,class="center-block")),
-               fluidRow(p("Copyright 2014 Softisms LLC.  All rights reserved.",class="row text-center"))
+               fluidRow(p(HTML("Copyright &copy; 2014 Softisms LLC.  All rights reserved."),class="row text-center"))
              ),
              
              #####################################
