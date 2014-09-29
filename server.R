@@ -1,5 +1,6 @@
 
 library(shiny)
+library(shinyBS)
 library(dplyr)
 library(lattice)
 
@@ -28,7 +29,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$industry <- renderDataTable({
-    #load_dataset()
+    load_dataset()
     data <- dataset$nyse_industry_sum %>%
       select(INDUS,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
@@ -881,56 +882,244 @@ shinyServer(function(input, output, session) {
   #          inter=inter.df,interi=interi.df,
   #          long=long.df,  longi=longi.df)
   
-  # ETP PSMF trend
-  output$etp_normal_trend_psmf <- renderDataTable({
-    load_dataset()
-    d <- dataset$etf_normal_trends$psmf
+  # merge trend values and indicators
+  # highlight functions still work with indicator flags
+  mergeTrendIndicators <- function(v,i) {
+    d <- format(v,decimals=0)
     if ( nrow(d) > 0 ) {
-      d <- cbind(rownames(d),d)
+      d <- sapply(1:31,function(y) {
+        paste0(d[,y],as.character(i[,y]))
+      })
+      colnames(d) <- colnames(v)
+      d <- cbind(rownames(v),d)
       colnames(d)[1] <- "Group"
       d
     }
     else
       rbind(d,NA)
+  }
+  
+  highlightPsmf <- function(t) {
+    highlightCells(session,t,min=75,max=100,class="good") # good pf success
+    highlightCells(session,t,min=50,max=74,class="neutral") # neutral pf info blue
+    highlightCells(session,t,min=25,max=49,class="warning")
+    highlightCells(session,t,min=0,max=24,class="bad") # bad pf error
+  }
+  
+  # NYSE industry trends
+  output$nyse_trend_indus_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_indus_trends$short,dataset$nyse_indus_trends$shorti)  
   })
   
-  # ETP short trend
-  output$etp_normal_trend_short <- renderDataTable({
+  output$nyse_trend_indus_inter <- renderTable({
     load_dataset()
-    d <- dataset$etf_normal_trends$short
-    if ( nrow(d) > 0 ) {
-      d <- cbind(rownames(d),d)
-      colnames(d)[1] <- "Group"
-      d
-    }
-    else
-      rbind(d,NA)
+    mergeTrendIndicators(dataset$nyse_indus_trends$inter,dataset$nyse_indus_trends$interi)  
   })
   
-  # ETP intermediate trend
-  output$etp_normal_trend_int <- renderDataTable({
+  output$nyse_trend_indus_long <- renderTable({
     load_dataset()
-    d <- dataset$etf_normal_trends$inter
-    if ( nrow(d) > 0 ) {
-      d <- cbind(rownames(d),d)
-      colnames(d)[1] <- "Group"
-      d
-    }
-    else
-      rbind(d,NA)
+    mergeTrendIndicators(dataset$nyse_indus_trends$long,dataset$nyse_indus_trends$longi)  
   })
   
-  # ETP long trend
-  output$etp_normal_trend_long <- renderDataTable({
+  output$nyse_trend_indus_psmf <- renderTable({
     load_dataset()
-    d <- dataset$etf_normal_trends$long
-    if ( nrow(d) > 0 ) {
-      d <- cbind(rownames(d),d)
-      colnames(d)[1] <- "Group"
-      d
+    mergeTrendIndicators(dataset$nyse_indus_trends$psmf,dataset$nyse_indus_trends$psmfi)  
+  })
+  
+  # NYSE supersector trends
+  output$nyse_trend_supsec_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_supsec_trends$short,dataset$nyse_supsec_trends$shorti)  
+  })
+  
+  output$nyse_trend_supsec_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_supsec_trends$inter,dataset$nyse_supsec_trends$interi)  
+  })
+  
+  output$nyse_trend_supsec_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_supsec_trends$long,dataset$nyse_supsec_trends$longi)  
+  })
+  
+  output$nyse_trend_supsec_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_supsec_trends$psmf,dataset$nyse_supsec_trends$psmfi)  
+  })
+  
+  # NYSE sector trends
+  output$nyse_trend_sector_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_sector_trends$short,dataset$nyse_sector_trends$shorti)  
+  })
+  
+  output$nyse_trend_sector_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_sector_trends$inter,dataset$nyse_sector_trends$interi)  
+  })
+  
+  output$nyse_trend_sector_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_sector_trends$long,dataset$nyse_sector_trends$longi)  
+  })
+  
+  output$nyse_trend_sector_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_sector_trends$psmf,dataset$nyse_sector_trends$psmfi)  
+  })
+  
+  # NYSE subsector trends
+  output$nyse_trend_subsec_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_subsec_trends$short,dataset$nyse_subsec_trends$shorti)  
+  })
+  
+  output$nyse_trend_subsec_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_subsec_trends$inter,dataset$nyse_subsec_trends$interi)  
+  })
+  
+  output$nyse_trend_subsec_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_subsec_trends$long,dataset$nyse_subsec_trends$longi)  
+  })
+  
+  output$nyse_trend_subsec_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nyse_subsec_trends$psmf,dataset$nyse_subsec_trends$psmfi)  
+  })
+  
+  observe({
+    if (input$nyseSubsecPsmfTrend) {
+      highlightPsmf("nyse_trend_subsec_psmf")
     }
-    else
-      rbind(d,NA)
+    
+    if (input$nyseSectorPsmfTrend) {
+      highlightPsmf("nyse_trend_sector_psmf")
+    }
+    
+    if (input$nyseSupsecPsmfTrend) {
+      highlightPsmf("nyse_trend_supsec_psmf")
+    }
+    
+    if (input$nyseIndusPsmfTrend) {
+      highlightPsmf("nyse_trend_indus_psmf")
+    }
+  })
+  
+  # NASDAQ industry trends
+  output$nasdaq_trend_indus_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_indus_trends$short,dataset$nasdaq_indus_trends$shorti)  
+  })
+  
+  output$nasdaq_trend_indus_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_indus_trends$inter,dataset$nasdaq_indus_trends$interi)  
+  })
+  
+  output$nasdaq_trend_indus_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_indus_trends$long,dataset$nasdaq_indus_trends$longi)  
+  })
+  
+  output$nasdaq_trend_indus_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_indus_trends$psmf,dataset$nasdaq_indus_trends$psmfi)  
+  })
+  
+  # NASDAQ sector trends
+  output$nasdaq_trend_sector_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_sector_trends$short,dataset$nyse_sector_trends$shorti)  
+  })
+  
+  output$nasdaq_trend_sector_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_sector_trends$inter,dataset$nasdaq_sector_trends$interi)  
+  })
+  
+  output$nasdaq_trend_sector_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_sector_trends$long,dataset$nasdaq_sector_trends$longi)  
+  })
+  
+  output$nasdaq_trend_sector_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$nasdaq_sector_trends$psmf,dataset$nasdaq_sector_trends$psmfi)  
+  })
+  
+  observe({
+    if (input$nasdaqSectorPsmfTrend) {
+      highlightPsmf("nasdaq_trend_sector_psmf")
+    }
+    
+    if (input$nasdaqIndusPsmfTrend) {
+      highlightPsmf("nasdaq_trend_indus_psmf")
+    }
+  })
+  
+  # ETP normal trends
+  output$etp_normal_trend_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_normal_trends$psmf,dataset$etf_normal_trends$psmfi)
+  })
+  
+  output$etp_normal_trend_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_normal_trends$short,dataset$etf_normal_trends$shorti)
+  })
+
+  output$etp_normal_trend_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_normal_trends$inter,dataset$etf_normal_trends$interi)
+  })
+  
+  output$etp_normal_trend_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_normal_trends$long,dataset$etf_normal_trends$longi)
+  })
+  
+  
+  observe({
+    if (input$etpNormalPsmfTrend) {
+      highlightCells(session,"etp_normal_trend_psmf",min=75,max=100,class="good") # good pf success
+      highlightCells(session,"etp_normal_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
+      highlightCells(session,"etp_normal_trend_psmf",min=25,max=49,class="warning")
+      highlightCells(session,"etp_normal_trend_psmf",min=0,max=24,class="bad") # bad pf error
+    }
+  })
+  
+  
+  # ETP inverse trends
+  output$etp_inverse_trend_psmf <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_inverse_trends$psmf,dataset$etf_inverse_trends$psmfi)
+  })
+  
+  output$etp_inverse_trend_short <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_inverse_trends$short,dataset$etf_inverse_trends$shorti)
+  })
+  
+  output$etp_inverse_trend_inter <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_inverse_trends$inter,dataset$etf_inverse_trends$interi)
+  })
+  
+  output$etp_inverse_trend_long <- renderTable({
+    load_dataset()
+    mergeTrendIndicators(dataset$etf_inverse_trends$long,dataset$etf_inverse_trends$longi)
+  })
+  
+  observe({
+    if (input$etpInversePsmfTrend) {
+      highlightCells(session,"etp_inverse_trend_psmf",min=75,max=100,class="good") # good pf success
+      highlightCells(session,"etp_inverse_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
+      highlightCells(session,"etp_inverse_trend_psmf",min=25,max=49,class="warning")
+      highlightCells(session,"etp_inverse_trend_psmf",min=0,max=24,class="bad") # bad pf error
+    }
   })
   
   #### debugging
@@ -945,4 +1134,9 @@ shinyServer(function(input, output, session) {
     require(markdown,quietly=TRUE)
     markdownToHTML("data/notes.md")
   })
+  
+  output$logo <- renderImage({
+    filename <- normalizePath(file.path('www/img/softisms.png'))
+    list(src=filename)
+  },deleteFile=FALSE)
 })
