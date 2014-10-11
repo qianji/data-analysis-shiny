@@ -1,5 +1,16 @@
+# action (gray), primary (blue), 
+# danger (red), 
+# warning (orange), success (Green), info (lt blue), 
+# inverse (black)
+# $("td:eq(1)", nRow).css("color", "white").css("background","green"); 
+# font-weight: bold, color: red
+# cell color: color="red",background="yellow"
+ 
 
-library(shiny)
+
+
+
+library(shiny) # must be Shiny >= 1.10.2 for DataTable names
 library(shinyBS)
 library(dplyr)
 library(lattice)
@@ -31,7 +42,7 @@ shinyServer(function(input, output, session) {
   output$industry <- renderDataTable({
     load_dataset()
     data <- dataset$nyse_industry_sum %>%
-      select(INDUS,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -41,7 +52,42 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  })
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(5,7,9,11),title="",class="details-control"),
+      list(targets=c(14:16),visible=F),
+      list(targets=c(3,4,6,8,10,13),class="alignRight"),
+      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(2);
+            color_quartile(14,4);
+            color_quartile(15,6);
+            color_quartile(16,8);
+      }'
+    ) # identity
+  ) # list
+  ) # function
   
   # NYSE new highs from exchange data, complete plot object
   output$nyse_new_highs <- renderPlot({
@@ -101,7 +147,7 @@ shinyServer(function(input, output, session) {
   output$sup_sec <- renderDataTable({
     load_dataset()
     data <- dataset$nyse_supsector_sum %>%
-      select(INDUS,SUP.SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -116,7 +162,42 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  })
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(6,8,10,12),title="",class="details-control"),
+      list(targets=c(15:17),visible=F),
+      list(targets=c(4,5,7,9,11,14),class="alignRight"),
+      list(targets=c(2,3,6,8,10,12,13),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(3);
+            color_quartile(15,5);
+            color_quartile(16,7);
+            color_quartile(17,9);
+      }'
+    ) # identity
+  ) # list
+  )
   
   ## NYSE sector panel
   output$nyse_sec_indus <- renderUI({
@@ -170,7 +251,7 @@ shinyServer(function(input, output, session) {
   output$sec <- renderDataTable({
     load_dataset()
     data <- dataset$nyse_sector_sum %>%
-      select(INDUS,SUP.SEC,SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -191,7 +272,42 @@ shinyServer(function(input, output, session) {
     }
     
     data
-  })
+  },options=list(
+    #pageLength=-1,
+    #paging=FALSE,
+    #searching=FALSE,
+    columnDefs=list(
+      list(targets=c(7,9,11,13),title="",class="details-control"),
+      list(targets=c(16:18),visible=F),
+      list(targets=c(5,6,8,10,12,15),class="alignRight"),
+      list(targets=c(3,4,7,9,11,13,14),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(4);
+            color_quartile(16,6);
+            color_quartile(17,8);
+            color_quartile(18,10);
+      }'
+    ) # identity
+  ) # list
+  )
   
   ### NYSE subsector panel
   output$nyse_sub_indus <- renderUI({
@@ -265,7 +381,7 @@ shinyServer(function(input, output, session) {
   output$sub_sec <- renderDataTable({
     load_dataset()
     data <- dataset$nyse_subsector_sum %>%
-      select(INDUS,SUP.SEC,SEC,SUB.SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,SEC,SUB.SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -290,7 +406,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    #pageLength=-1,
+    #paging=FALSE,
+    #searching=FALSE,
+    columnDefs=list(
+      list(targets=c(8,10,12,14),title="",class="details-control"),
+      list(targets=c(17:19),visible=F),
+      list(targets=c(6,7,9,11,13,16),class="alignRight"),
+      list(targets=c(4,5,8,10,12,14,15),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(5);
+            color_quartile(17,7);
+            color_quartile(18,9);
+            color_quartile(19,11);
+      }'
+    ) # identity
+  ) # list
   )
   
   #NYSE map
@@ -300,6 +450,7 @@ shinyServer(function(input, output, session) {
   })
   
   ####### NASDAQ industry
+  
   output$nasdaq_industry_menu <- renderUI({
     load_dataset()
     d <- dataset$nasdaq_industry_sum
@@ -311,7 +462,7 @@ shinyServer(function(input, output, session) {
   output$nasdaq_industry <- renderDataTable({
     load_dataset()
     data <- dataset$nasdaq_industry_sum %>%
-      select(INDUS,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -321,7 +472,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(5,7,9,11),title="",class="details-control"),
+      list(targets=c(14:16),visible=F),
+      list(targets=c(3,4,6,8,10,13),class="alignRight"),
+      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(2);
+            color_quartile(14,4);
+            color_quartile(15,6);
+            color_quartile(16,8);
+      }'
+    ) # identity
+  ) # list
   )
   
   ###### NASDAQ sector
@@ -362,9 +547,10 @@ shinyServer(function(input, output, session) {
     #data <- data_sector_sum_nasdaq()
     load_dataset()
     data <- dataset$nasdaq_sector_sum %>%
-      select(INDUS,SUB.SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUB.SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
+    
     if ( length(input$nasdaq_sec_indus) > 0) {
       if ( "All" %nin% input$nasdaq_sec_indus ) {
         data <- filter(data,INDUS %in% input$nasdaq_sec_indus)
@@ -376,7 +562,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    #pageLength=-1,
+    #paging=FALSE,
+    #searching=FALSE,
+    columnDefs=list(
+      list(targets=c(6,8,10,12),title="",class="details-control"),
+      list(targets=c(15:17),visible=F),
+      list(targets=c(4,5,7,9,11,14),class="alignRight"),
+      list(targets=c(2,3,6,8,10,12,13),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(3);
+            color_quartile(15,5);
+            color_quartile(16,7);
+            color_quartile(17,9);
+      }'
+    ) # identity
+  ) # list
   )
   
   # NASDAQ new highs from exchange data, complete plot object
@@ -425,7 +645,7 @@ shinyServer(function(input, output, session) {
   output$etp_normal <- renderDataTable({
     load_dataset()
     data <- dataset$etf_normal %>%
-      select(ETFdb.Category,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(ETFdb.Category,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     if ( "All" %nin% input$etf_normal_menu ) {
@@ -434,7 +654,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    #pageLength=-1,
+    #paging=FALSE,
+    #searching=FALSE,
+    columnDefs=list(
+      list(targets=c(5,7,9,11),title="",class="details-control"),
+      list(targets=c(14:16),visible=F),
+      list(targets=c(3,4,6,8,10,13),class="alignRight"),
+      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(2);
+            color_quartile(14,4);
+            color_quartile(15,6);
+            color_quartile(16,8);
+      }'
+    ) # identity
+  ) # list
   )
   
   ####### ETP inverse
@@ -449,7 +703,7 @@ shinyServer(function(input, output, session) {
   output$etp_inverse <- renderDataTable({
     load_dataset()
     data <- dataset$etf_inverse %>% 
-      select(ETFdb.Category,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(ETFdb.Category,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     if ( "All" %nin% input$etf_inverse_menu ) {
@@ -458,7 +712,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(5,7,9,11),title="",class="details-control"),
+      list(targets=c(14:16),visible=F),
+      list(targets=c(3,4,6,8,10,13),class="alignRight"),
+      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(2);
+            color_quartile(14,4);
+            color_quartile(15,6);
+            color_quartile(16,8);
+      }'
+    ) # identity
+  ) # list
   )
   
   # ETF/ETP map
@@ -483,7 +771,7 @@ shinyServer(function(input, output, session) {
     # data <- data_industry_sum_special()
     load_dataset()
     data <- dataset$special_industry_sum %>%
-      select(INDUS,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -493,7 +781,42 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  })
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(5,7,9,11),title="",class="details-control"),
+      list(targets=c(14:16),visible=F),
+      list(targets=c(3,4,6,8,10,13),class="alignRight"),
+      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(2);
+            color_quartile(14,4);
+            color_quartile(15,6);
+            color_quartile(16,8);
+      }'
+    ) # identity
+  ) # list
+  )
   
   
   ### SPECIAL supersector panel
@@ -533,7 +856,7 @@ shinyServer(function(input, output, session) {
     # data <- data_supsector_sum_special()
     load_dataset()
     data <- dataset$special_supsector_sum %>%
-      select(INDUS,SUP.SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -548,7 +871,42 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  })
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(6,8,10,12),title="",class="details-control"),
+      list(targets=c(15:17),visible=F),
+      list(targets=c(4,5,7,9,11,14),class="alignRight"),
+      list(targets=c(2,3,6,8,10,12,13),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(3);
+            color_quartile(15,5);
+            color_quartile(16,7);
+            color_quartile(17,9);
+      }'
+    ) # identity
+  ) # list
+  )
   
   ### SPECIAL sector panel
   output$special_sec_indus <- renderUI({
@@ -608,9 +966,10 @@ shinyServer(function(input, output, session) {
     # data <- data_sector_sum_special()
     load_dataset()
     data <- dataset$special_sector_sum %>%
-      select(INDUS,SUP.SEC,SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
+      # mutate(ShR=ShortRank,InR=IntRank,LgR=LongRank)
     
     if ( length(input$special_sec_indus) > 0) {
       if ( "All" %nin% input$special_sec_indus ) {
@@ -629,7 +988,42 @@ shinyServer(function(input, output, session) {
     }
     
     data
-  })
+  },options=list(
+    pageLength=-1,
+    paging=FALSE,
+    searching=FALSE,
+    columnDefs=list(
+      list(targets=c(7,9,11,13),title="",class="details-control"),
+      list(targets=c(16:18),visible=F),
+      list(targets=c(5,6,8,10,12,15),class="alignRight"),
+      list(targets=c(3,4,7,9,11,13,14),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(4);
+            color_quartile(16,6);
+            color_quartile(17,8);
+            color_quartile(18,10);
+      }'
+    ) # identity
+  ) # list
+  )
   
   ### SPECIAL subsector panel
   
@@ -705,7 +1099,7 @@ shinyServer(function(input, output, session) {
   output$special_subsec_table <- renderDataTable({
     load_dataset()
     data <- dataset$special_subsector_sum %>%
-      select(INDUS,SUP.SEC,SEC,SUB.SEC,Members,HILO,PChg,ShortRank,IntRank,LongRank,PSMF,RankPos,Gear) %>%
+      select(INDUS,SUP.SEC,SEC,SUB.SEC,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
@@ -730,7 +1124,41 @@ shinyServer(function(input, output, session) {
       }
     }
     data
-  }
+  },options=list(
+    #pageLength=-1,
+    #paging=FALSE,
+    #searching=FALSE,
+    columnDefs=list(
+      list(targets=c(8,10,12,14),title="",class="details-control"),
+      list(targets=c(17:19),visible=F),
+      list(targets=c(6,7,9,11,13,16),class="alignRight"),
+      list(targets=c(4,5,8,10,12,14,15),class="alignCenter")
+    ),
+    rowCallback = I(
+      'function(row, data) {
+          function color_hilo(dc) {
+            if (data[dc].substring(0,2) == "LO")
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+            if (data[dc].substring(0,2) == "HI")
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");            
+          }
+          function color_quartile(qc,dc) {
+             if (data[qc] == 1)
+                $("td:eq("+dc+")", row).css("background","#76ee00").css("color","black");
+             if (data[qc] == 2)
+                $("td:eq("+dc+")", row).css("background","#ffd700").css("color","black");
+             if (data[qc] == 3)
+                $("td:eq("+dc+")", row).css("background","#ffb90f").css("color","black");
+             if (data[qc] == 4)
+                $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
+          }
+            color_hilo(5);
+            color_quartile(17,7);
+            color_quartile(18,9);
+            color_quartile(19,11);
+      }'
+    ) # identity
+  ) # list
   )
   
   # special map

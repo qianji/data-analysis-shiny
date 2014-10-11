@@ -5,6 +5,7 @@ PSMF_BUTTON_STYLE="primary"
 
 shinyUI(
   navbarPage("Groups",
+
              tabPanel("NYSE",
                       fluidRow(column(8,''),column(4,textOutput('nyse_date'))),
                       tabsetPanel(id='nyse_chooser',
@@ -87,7 +88,7 @@ shinyUI(
                                                                                                             "Color Table",
                                                                                                             style=PSMF_BUTTON_STYLE,
                                                                                                             block=TRUE))),
-                                                                          tableOutput("nyse_trend_supsec_psmf")),
+                                                                           tableOutput("nyse_trend_supsec_psmf")),
                                                                   tabPanel('SECTOR', 
                                                                            fluidRow(column(2,bsActionButton("nyseSectorPsmfTrend",
                                                                                                             "Color Table",
@@ -104,7 +105,7 @@ shinyUI(
                                            value="nyse_trends_panel",
                                            icon=icon("arrows"))
                       ), # nyse chooser tabset
-
+                      
                       icon=icon("building-o")
              ), # nyse tab panel
              
@@ -333,19 +334,21 @@ shinyUI(
                       icon=icon("paperclip")),
              
              #####################################
-             # logos, copyright, disclaimers for all pages
-             
-             wellPanel(
-               fluidRow(column(4,imageOutput("logo",height="75px"),offset=4,class="center-block")),
-               fluidRow(p(HTML("Copyright &copy; 2014 Softisms LLC.  All rights reserved."),class="row text-center"))
-             ),
+             # tag style updates to help with data table alignment
+             tags$head(tags$style(".table .alignRight {text-align:right;}")),
+             tags$head(tags$style(".table .alignCenter {text-align:center;}")),
+
              
              #####################################
+             # logos, copyright, disclaimers for all pages
              header=NULL,
-             footer=NULL,
+             footer=wellPanel(
+               fluidRow(column(4,imageOutput("logo",height="75px"),offset=4,class="center-block")),
+               fluidRow(p(HTML("Copyright &copy; 2014 Softisms LLC.  All rights reserved."),class="row text-center"))
+             ), 
              fluid=TRUE,
              inverse=TRUE,
-             collapsable=FALSE,
+             collapsable=TRUE,
              responsive=TRUE
              #theme="css/style.css",
              #navbarMenu("Modes",
@@ -356,5 +359,4 @@ shinyUI(
              
              
   )  # navbar page
-
 )
