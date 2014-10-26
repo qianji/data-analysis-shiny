@@ -6,3 +6,5 @@
 uiWorking.R
 
 *.dcf
+
+data/eoddata.RData
