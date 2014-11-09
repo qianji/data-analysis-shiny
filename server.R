@@ -10,7 +10,8 @@
 
 
 
-library(shiny) # must be Shiny >= 1.10.2 for DataTable names
+library(shiny) # must be Shiny >= 0.10.2 for DataTable names;
+               # must be Shiny >= 0.10.2.9003 for sorting bug fix
 library(shinyBS)
 library(dplyr)
 library(lattice)
@@ -20,6 +21,7 @@ DECIMALS <- 2
 
 # not-in-set operator
 `%nin%` <- Negate(`%in%`) 
+
 
 # server
 shinyServer(function(input, output, session) {
@@ -40,15 +42,19 @@ shinyServer(function(input, output, session) {
   })
   
   output$industry <- renderDataTable({
+    print("loading")
     load_dataset()
+    print("got dataset")
     data <- dataset$nyse_industry_sum %>%
       select(INDUS,Mem=Members,HILO,PChg,ShR=ShortRank,ShortTrend,InR=IntRank,IntTrend,LgR=LongRank,LongTrend,CMF=PSMF,PSMFTrend,RankPos,Gear,ShortQ,IntQ,LongQ) %>%
       mutate(PChg=round(PChg,DECIMALS)) %>%
       mutate(Gear=round(Gear,DECIMALS))
     
+    print(paste("input",names(input)))
+    
     if ( "All" %nin% input$nyse_industry_menu ) {
       if ( !is.null(input$nyse_industry_menu)) {
-        data <- filter(data,INDUS %in% input$nyse_industry_menu)
+        data <- dplyr::filter(data,INDUS %in% input$nyse_industry_menu)
       }
     }
     data
@@ -56,15 +62,18 @@ shinyServer(function(input, output, session) {
     pageLength=-1,
     paging=FALSE,
     searching=FALSE,
-    columnDefs=list(
-      list(targets=c(5,7,9,11),title="",class="details-control"),
-      list(targets=c(14:16),visible=F),
-      list(targets=c(3,4,6,8,10,13),class="alignRight"),
-      list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
+     columnDefs=list(
+       list(targets=c(5,7,9,11),title="",class="details-control"),
+       list(targets=c(14:16),visible=F),
+       list(targets=c(3,4,6,8,10,13),class="alignRight"),
+       list(targets=c(1,2,5,7,9,11,12),class="alignCenter")
     ),
     rowCallback = I(
+      # createdRow = I(
       'function(row, data) {
           function color_hilo(dc) {
+            if (data.length < dc)
+              return;
             if (data[dc].substring(0,2) == "LO")
                 $("td:eq("+dc+")", row).css("background","#ee2c2c").css("color","white");
             if (data[dc].substring(0,2) == "HI")
@@ -132,11 +141,13 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
+    print("industry observe")
     sup_industry_selection <- input$nyse_sup_indus 
+    print(paste("selection",sup_industry_selection))
     if ( length(sup_industry_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_supsector_sum
-      d <- filter(d,INDUS==sup_industry_selection)
+      d <- dplyr::filter(d,INDUS==sup_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "nyse_sup_sup", 
                         choices = items,selected=items[1]
@@ -153,12 +164,12 @@ shinyServer(function(input, output, session) {
     
     if ( "All" %nin% input$nyse_sup_indus ) {
       if ( ! is.null(input$nyse_sup_indus)) {
-        data <- filter(data,INDUS %in% input$nyse_sup_indus)
+        data <- dplyr::filter(data,INDUS %in% input$nyse_sup_indus)
       }
     }
     if ( "All" %nin% input$nyse_sup_sup ) {
       if ( ! is.null(input$nyse_sup_sup)) {
-        data <- filter(data,SUP.SEC %in% input$nyse_sup_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$nyse_sup_sup)
       }
     }
     data
@@ -229,7 +240,7 @@ shinyServer(function(input, output, session) {
     if ( length(sec_industry_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_sector_sum
-      d <- filter(d,INDUS==sec_industry_selection)
+      d <- dplyr::filter(d,INDUS==sec_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "nyse_sec_sup", 
                         choices = items,selected=items[1]
@@ -241,7 +252,7 @@ shinyServer(function(input, output, session) {
     if ( length(sec_sup_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_sector_sum
-      d <- d %>% filter(SUP.SEC==sec_sup_selection)
+      d <- d %>% dplyr::filter(SUP.SEC==sec_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
       updateSelectInput(session, "nyse_sec_sec", 
                         choices = items,selected=items[1]
@@ -257,17 +268,17 @@ shinyServer(function(input, output, session) {
     
     if ( "All" %nin% input$nyse_sec_indus ) {
       if ( !is.null(input$nyse_sec_indus)) {
-        data <- filter(data,INDUS %in% input$nyse_sec_indus)
+        data <- dplyr::filter(data,INDUS %in% input$nyse_sec_indus)
       }
     }
     if ( "All" %nin% input$nyse_sec_sup ) {
       if ( !is.null(input$nyse_sec_sup)) {
-        data <- filter(data,SUP.SEC %in% input$nyse_sec_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$nyse_sec_sup)
       }
     }
     if ( "All" %nin% input$nyse_sec_sec ) {
       if ( !is.null(input$nyse_sec_sec)) {
-        data <- filter(data,SEC %in% input$nyse_sec_sec)
+        data <- dplyr::filter(data,SEC %in% input$nyse_sec_sec)
       }
     }
     
@@ -347,7 +358,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_industry_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_subsector_sum
-      d <- filter(d,INDUS==sub_industry_selection)
+      d <- dplyr::filter(d,INDUS==sub_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "nyse_sub_sup", 
                         choices = items,selected=items[1]
@@ -359,7 +370,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_sup_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_subsector_sum
-      d <- d %>% filter(SUP.SEC==sub_sup_selection)
+      d <- d %>% dplyr::filter(SUP.SEC==sub_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
       updateSelectInput(session, "nyse_sub_sec", 
                         choices = items,selected=items[1]
@@ -371,7 +382,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_sec_selection) > 0 ) {
       load_dataset()
       d <- dataset$nyse_subsector_sum
-      d <- d %>% filter(SEC==sub_sec_selection)
+      d <- d %>% dplyr::filter(SEC==sub_sec_selection)
       items <- c("All",unique(as.character(d$SUB.SEC)))
       updateSelectInput(session, "nyse_sub_sub", 
                         choices = items,selected=items[1]
@@ -387,22 +398,22 @@ shinyServer(function(input, output, session) {
     
     if ( "All" %nin% input$nyse_sub_indus ) {
       if ( ! is.null(input$nyse_sub_indus)) {
-        data <- filter(data,INDUS %in% input$nyse_sub_indus)
+        data <- dplyr::filter(data,INDUS %in% input$nyse_sub_indus)
       }
     }
     if ( "All" %nin% input$nyse_sub_sup ) {
       if ( !is.null(input$nyse_sub_sup)) {
-        data <- filter(data,SUP.SEC %in% input$nyse_sub_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$nyse_sub_sup)
       }
     }
     if ( "All" %nin% input$nyse_sub_sec ) {
       if ( !is.null(input$nyse_sub_sec)) {
-        data <- filter(data,SEC %in% input$nyse_sub_sec)
+        data <- dplyr::filter(data,SEC %in% input$nyse_sub_sec)
       }
     }
     if ( "All" %nin% input$nyse_sub_sub ) {
       if ( !is.null(input$nyse_sub_sub)) {
-        data <- filter(data,SUB.SEC %in% input$nyse_sub_sub)
+        data <- dplyr::filter(data,SUB.SEC %in% input$nyse_sub_sub)
       }
     }
     data
@@ -468,7 +479,7 @@ shinyServer(function(input, output, session) {
     
     if ( "All" %nin% input$nasdaq_industry_menu ) {
       if ( ! is.null(input$nasdaq_industry_menu) ) {
-        data <- filter(data,INDUS %in% input$nasdaq_industry_menu) 
+        data <- dplyr::filter(data,INDUS %in% input$nasdaq_industry_menu) 
       }
     }
     data
@@ -534,7 +545,7 @@ shinyServer(function(input, output, session) {
       #d <- data_sector_sum_nasdaq()
       load_dataset()
       d <- dataset$nasdaq_sector_sum
-      d <- filter(d,INDUS==sec_industry_selection)
+      d <- dplyr::filter(d,INDUS==sec_industry_selection)
       items <- c("All",unique(as.character(d$SUB.SEC)))
       updateSelectInput(session, "nasdaq_sec_sec", 
                         choices = items,selected=items[1]
@@ -553,12 +564,12 @@ shinyServer(function(input, output, session) {
     
     if ( length(input$nasdaq_sec_indus) > 0) {
       if ( "All" %nin% input$nasdaq_sec_indus ) {
-        data <- filter(data,INDUS %in% input$nasdaq_sec_indus)
+        data <- dplyr::filter(data,INDUS %in% input$nasdaq_sec_indus)
       }
     }
     if ( length(input$nasdaq_sec_sec) > 0) {
       if ( "All" %nin% input$nasdaq_sec_sec ) {
-        data <- filter(data,SUB.SEC %in% input$nasdaq_sec_sec)
+        data <- dplyr::filter(data,SUB.SEC %in% input$nasdaq_sec_sec)
       }
     }
     data
@@ -650,7 +661,7 @@ shinyServer(function(input, output, session) {
       mutate(Gear=round(Gear,DECIMALS))
     if ( "All" %nin% input$etf_normal_menu ) {
       if ( ! is.null(input$etf_normal_menu)) {
-        data <- filter(data,ETFdb.Category %in% input$etf_normal_menu) 
+        data <- dplyr::filter(data,ETFdb.Category %in% input$etf_normal_menu) 
       }
     }
     data
@@ -708,7 +719,7 @@ shinyServer(function(input, output, session) {
       mutate(Gear=round(Gear,DECIMALS))
     if ( "All" %nin% input$etf_inverse_menu ) {
       if ( ! is.null(input$etf_inverse_menu )) {
-        data <- filter(data,ETFdb.Category %in% input$etf_inverse_menu) 
+        data <- dplyr::filter(data,ETFdb.Category %in% input$etf_inverse_menu) 
       }
     }
     data
@@ -777,7 +788,7 @@ shinyServer(function(input, output, session) {
     
     if ( length(input$special_industry_menu) > 0 ) {
       if ( "All" %nin% input$special_industry_menu ) {
-        data <- filter(data,INDUS %in% input$special_industry_menu)
+        data <- dplyr::filter(data,INDUS %in% input$special_industry_menu)
       }
     }
     data
@@ -844,7 +855,7 @@ shinyServer(function(input, output, session) {
       # d <- data_supsector_sum_special()
       load_dataset()
       d <- dataset$special_supsector_sum
-      d <- filter(d,INDUS==sup_industry_selection)
+      d <- dplyr::filter(d,INDUS==sup_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "special_sup_sup", 
                         choices = items,selected=items[1]
@@ -862,12 +873,12 @@ shinyServer(function(input, output, session) {
     
     if ( length(input$special_sup_indus) > 0 ) {
       if ( "All" %nin% input$special_sup_indus ) {
-        data <- filter(data,INDUS %in% input$special_sup_indus)
+        data <- dplyr::filter(data,INDUS %in% input$special_sup_indus)
       }
     }
     if ( length(input$special_sup_sup) > 0 ) {
       if ( "All" %nin% input$special_sup_sup ) {
-        data <- filter(data,SUP.SEC %in% input$special_sup_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$special_sup_sup)
       }
     }
     data
@@ -942,7 +953,7 @@ shinyServer(function(input, output, session) {
       #d <- data_sector_sum_special()
       load_dataset()
       d <- dataset$special_sector_sum
-      d <- filter(d,INDUS==sec_industry_selection)
+      d <- dplyr::filter(d,INDUS==sec_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "special_sec_sup", 
                         choices = items,selected=items[1]
@@ -955,7 +966,7 @@ shinyServer(function(input, output, session) {
       # d <- data_sector_sum_special()
       load_dataset()
       d <- dataset$special_sector_sum
-      d <- d %>% filter(SUP.SEC==sec_sup_selection)
+      d <- d %>% dplyr::filter(SUP.SEC==sec_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
       updateSelectInput(session, "special_sec_sec", 
                         choices = items,selected=items[1]
@@ -973,17 +984,17 @@ shinyServer(function(input, output, session) {
     
     if ( length(input$special_sec_indus) > 0) {
       if ( "All" %nin% input$special_sec_indus ) {
-        data <- filter(data,INDUS %in% input$special_sec_indus)
+        data <- dplyr::filter(data,INDUS %in% input$special_sec_indus)
       }
     }
     if ( length(input$special_sec_sup) > 0) {
       if ( "All" %nin% input$special_sec_sup ) {
-        data <- filter(data,SUP.SEC %in% input$special_sec_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$special_sec_sup)
       }
     }
     if ( length(input$special_sec_sec)>0) {
       if ( "All" %nin% input$special_sec_sec ) {
-        data <- filter(data,SEC %in% input$special_sec_sec)
+        data <- dplyr::filter(data,SEC %in% input$special_sec_sec)
       }
     }
     
@@ -1065,7 +1076,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_industry_selection) > 0 ) {
       load_dataset()
       d <- dataset$special_subsector_sum
-      d <- filter(d,INDUS==sub_industry_selection)
+      d <- dplyr::filter(d,INDUS==sub_industry_selection)
       items <- c("All",unique(as.character(d$SUP.SEC)))
       updateSelectInput(session, "special_sub_sup", 
                         choices = items,selected=items[1]
@@ -1077,7 +1088,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_sup_selection) > 0 ) {
       load_dataset()
       d <- dataset$special_subsector_sum
-      d <- d %>% filter(SUP.SEC==sub_sup_selection)
+      d <- d %>% dplyr::filter(SUP.SEC==sub_sup_selection)
       items <- c("All",unique(as.character(d$SEC)))
       updateSelectInput(session, "special_sub_sec", 
                         choices = items,selected=items[1]
@@ -1089,7 +1100,7 @@ shinyServer(function(input, output, session) {
     if ( length(sub_sec_selection) > 0 ) {
       load_dataset()
       d <- dataset$special_subsector_sum
-      d <- d %>% filter(SEC==sub_sec_selection)
+      d <- d %>% dplyr::filter(SEC==sub_sec_selection)
       items <- c("All",unique(as.character(d$SUB.SEC)))
       updateSelectInput(session, "special_sub_sub", 
                         choices = items,selected=items[1]
@@ -1105,22 +1116,22 @@ shinyServer(function(input, output, session) {
     
     if ( length(input$special_sub_indus) > 0) {
       if ( "All" %nin% input$special_sub_indus ) {
-        data <- filter(data,INDUS %in% input$special_sub_indus)
+        data <- dplyr::filter(data,INDUS %in% input$special_sub_indus)
       }
     }
     if ( length(input$special_sub_sup) > 0) {
       if ( "All" %nin% input$special_sub_sup ) {
-        data <- filter(data,SUP.SEC %in% input$special_sub_sup)
+        data <- dplyr::filter(data,SUP.SEC %in% input$special_sub_sup)
       }
     }
     if ( length(input$special_sub_sec) > 0) {
       if ( "All" %nin% input$special_sub_sec ) {
-        data <- filter(data,SEC %in% input$special_sub_sec)
+        data <- dplyr::filter(data,SEC %in% input$special_sub_sec)
       }
     }
     if ( length(input$special_sub_sub) > 0) {
       if ( "All" %nin% input$special_sub_sub ) {
-        data <- filter(data,SUB.SEC %in% input$special_sub_sub)
+        data <- dplyr::filter(data,SUB.SEC %in% input$special_sub_sub)
       }
     }
     data
