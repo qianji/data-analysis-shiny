@@ -1355,6 +1355,24 @@ shinyServer(function(input, output, session) {
     mergeTrendIndicators(dataset$nyse_indus_trends$psmf,dataset$nyse_indus_trends$psmfi)  
   })
   
+  output$nyse_heatmap_indus_short <- renderPlot({
+    load_dataset()
+    dataset$nyse_indus_heatmaps$short
+  })
+  output$nyse_heatmap_indus_inter <- renderPlot({
+    load_dataset()
+    dataset$nyse_indus_heatmaps$inter
+  })
+  output$nyse_heatmap_indus_long <- renderPlot({
+    load_dataset()
+    dataset$nyse_indus_heatmaps$long
+  })
+  output$nyse_heatmap_indus_psmf <- renderPlot({
+    load_dataset()
+    dataset$nyse_indus_heatmaps$psmf
+  })
+  
+  
   # NYSE supersector trends
   output$nyse_trend_supsec_short <- renderTable({
     load_dataset()
@@ -1374,6 +1392,23 @@ shinyServer(function(input, output, session) {
   output$nyse_trend_supsec_psmf <- renderTable({
     load_dataset()
     mergeTrendIndicators(dataset$nyse_supsec_trends$psmf,dataset$nyse_supsec_trends$psmfi)  
+  })
+
+  output$nyse_heatmap_supsec_short <- renderPlot({
+    load_dataset()
+    dataset$nyse_supsec_heatmaps$short
+  })
+  output$nyse_heatmap_supsec_inter <- renderPlot({
+    load_dataset()
+    dataset$nyse_supsec_heatmaps$inter
+  })
+  output$nyse_heatmap_supsec_long <- renderPlot({
+    load_dataset()
+    dataset$nyse_supsec_heatmaps$long
+  })
+  output$nyse_heatmap_supsec_psmf <- renderPlot({
+    load_dataset()
+    dataset$nyse_supsec_heatmaps$psmf
   })
   
   # NYSE sector trends
@@ -1396,6 +1431,23 @@ shinyServer(function(input, output, session) {
     load_dataset()
     mergeTrendIndicators(dataset$nyse_sector_trends$psmf,dataset$nyse_sector_trends$psmfi)  
   })
+
+  output$nyse_heatmap_sector_short <- renderPlot({
+    load_dataset()
+    dataset$nyse_sector_heatmaps$short
+  })
+  output$nyse_heatmap_sector_inter <- renderPlot({
+    load_dataset()
+    dataset$nyse_sector_heatmaps$inter
+  })
+  output$nyse_heatmap_sector_long <- renderPlot({
+    load_dataset()
+    dataset$nyse_sector_heatmaps$long
+  })
+  output$nyse_heatmap_sector_psmf <- renderPlot({
+    load_dataset()
+    dataset$nyse_sector_heatmaps$psmf
+  })
   
   # NYSE subsector trends
   output$nyse_trend_subsec_short <- renderTable({
@@ -1417,24 +1469,41 @@ shinyServer(function(input, output, session) {
     load_dataset()
     mergeTrendIndicators(dataset$nyse_subsec_trends$psmf,dataset$nyse_subsec_trends$psmfi)  
   })
-  
-  observe({
-    if (input$nyseSubsecPsmfTrend) {
-      highlightPsmf("nyse_trend_subsec_psmf")
-    }
-    
-    if (input$nyseSectorPsmfTrend) {
-      highlightPsmf("nyse_trend_sector_psmf")
-    }
-    
-    if (input$nyseSupsecPsmfTrend) {
-      highlightPsmf("nyse_trend_supsec_psmf")
-    }
-    
-    if (input$nyseIndusPsmfTrend) {
-      highlightPsmf("nyse_trend_indus_psmf")
-    }
+
+  output$nyse_heatmap_subsec_short <- renderPlot({
+    load_dataset()
+    dataset$nyse_subsec_heatmaps$short
   })
+  output$nyse_heatmap_subsec_inter <- renderPlot({
+    load_dataset()
+    dataset$nyse_subsec_heatmaps$inter
+  })
+  output$nyse_heatmap_subsec_long <- renderPlot({
+    load_dataset()
+    dataset$nyse_subsec_heatmaps$long
+  })
+  output$nyse_heatmap_subsec_psmf <- renderPlot({
+    load_dataset()
+    dataset$nyse_subsec_heatmaps$psmf
+  })
+  
+#   observe({
+#     if (input$nyseSubsecPsmfTrend) {
+#       highlightPsmf("nyse_trend_subsec_psmf")
+#     }
+#     
+#     if (input$nyseSectorPsmfTrend) {
+#       highlightPsmf("nyse_trend_sector_psmf")
+#     }
+#     
+#     if (input$nyseSupsecPsmfTrend) {
+#       highlightPsmf("nyse_trend_supsec_psmf")
+#     }
+#     
+#     if (input$nyseIndusPsmfTrend) {
+#       highlightPsmf("nyse_trend_indus_psmf")
+#     }
+#   })
   
   # NASDAQ industry trends
   output$nasdaq_trend_indus_short <- renderTable({
@@ -1457,7 +1526,24 @@ shinyServer(function(input, output, session) {
     mergeTrendIndicators(dataset$nasdaq_indus_trends$psmf,dataset$nasdaq_indus_trends$psmfi)  
   })
   
-  # NASDAQ sector trends
+output$nasdaq_heatmap_indus_short <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_indus_heatmaps$short
+})
+output$nasdaq_heatmap_indus_inter <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_indus_heatmaps$inter
+})
+output$nasdaq_heatmap_indus_long <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_indus_heatmaps$long
+})
+output$nasdaq_heatmap_indus_psmf <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_indus_heatmaps$psmf
+})
+
+# NASDAQ sector trends
   output$nasdaq_trend_sector_short <- renderTable({
     load_dataset()
     mergeTrendIndicators(dataset$nasdaq_sector_trends$short,dataset$nyse_sector_trends$shorti)  
@@ -1477,16 +1563,33 @@ shinyServer(function(input, output, session) {
     load_dataset()
     mergeTrendIndicators(dataset$nasdaq_sector_trends$psmf,dataset$nasdaq_sector_trends$psmfi)  
   })
-  
-  observe({
-    if (input$nasdaqSectorPsmfTrend) {
-      highlightPsmf("nasdaq_trend_sector_psmf")
-    }
-    
-    if (input$nasdaqIndusPsmfTrend) {
-      highlightPsmf("nasdaq_trend_indus_psmf")
-    }
-  })
+
+output$nasdaq_heatmap_sector_short <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_sector_heatmaps$short
+})
+output$nasdaq_heatmap_sector_inter <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_sector_heatmaps$inter
+})
+output$nasdaq_heatmap_sector_long <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_sector_heatmaps$long
+})
+output$nasdaq_heatmap_sector_psmf <- renderPlot({
+  load_dataset()
+  dataset$nasdaq_sector_heatmaps$psmf
+})
+
+#   observe({
+#     if (input$nasdaqSectorPsmfTrend) {
+#       highlightPsmf("nasdaq_trend_sector_psmf")
+#     }
+#     
+#     if (input$nasdaqIndusPsmfTrend) {
+#       highlightPsmf("nasdaq_trend_indus_psmf")
+#     }
+#   })
   
   # ETP normal trends
   output$etp_normal_trend_psmf <- renderTable({
@@ -1509,16 +1612,32 @@ shinyServer(function(input, output, session) {
     mergeTrendIndicators(dataset$etf_normal_trends$long,dataset$etf_normal_trends$longi)
   })
   
-  
-  observe({
-    if (input$etpNormalPsmfTrend) {
-      highlightCells(session,"etp_normal_trend_psmf",min=75,max=100,class="good") # good pf success
-      highlightCells(session,"etp_normal_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
-      highlightCells(session,"etp_normal_trend_psmf",min=25,max=49,class="warning")
-      highlightCells(session,"etp_normal_trend_psmf",min=0,max=24,class="bad") # bad pf error
-    }
-  })
-  
+output$etp_heatmap_normal_short <- renderPlot({
+  load_dataset()
+  dataset$etf_normal_heatmaps$short
+})
+output$etp_heatmap_normal_inter <- renderPlot({
+  load_dataset()
+  dataset$etf_normal_heatmaps$inter
+})
+output$etp_heatmap_normal_long <- renderPlot({
+  load_dataset()
+  dataset$etf_normal_heatmaps$long
+})
+output$etp_heatmap_normal_psmf <- renderPlot({
+  load_dataset()
+  dataset$etf_normal_heatmaps$psmf
+})
+
+#   observe({
+#     if (input$etpNormalPsmfTrend) {
+#       highlightCells(session,"etp_normal_trend_psmf",min=75,max=100,class="good") # good pf success
+#       highlightCells(session,"etp_normal_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
+#       highlightCells(session,"etp_normal_trend_psmf",min=25,max=49,class="warning")
+#       highlightCells(session,"etp_normal_trend_psmf",min=0,max=24,class="bad") # bad pf error
+#     }
+#   })
+#   
   
   # ETP inverse trends
   output$etp_inverse_trend_psmf <- renderTable({
@@ -1540,15 +1659,32 @@ shinyServer(function(input, output, session) {
     load_dataset()
     mergeTrendIndicators(dataset$etf_inverse_trends$long,dataset$etf_inverse_trends$longi)
   })
+
+output$etp_heatmap_inverse_short <- renderPlot({
+  load_dataset()
+  dataset$etf_inverse_heatmaps$short
+})
+output$etp_heatmap_inverse_inter <- renderPlot({
+  load_dataset()
+  dataset$etf_inverse_heatmaps$inter
+})
+output$etp_heatmap_inverse_long <- renderPlot({
+  load_dataset()
+  dataset$etf_inverse_heatmaps$long
+})
+output$etp_heatmap_inverse_psmf <- renderPlot({
+  load_dataset()
+  dataset$etf_inverse_heatmaps$psmf
+})
   
-  observe({
-    if (input$etpInversePsmfTrend) {
-      highlightCells(session,"etp_inverse_trend_psmf",min=75,max=100,class="good") # good pf success
-      highlightCells(session,"etp_inverse_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
-      highlightCells(session,"etp_inverse_trend_psmf",min=25,max=49,class="warning")
-      highlightCells(session,"etp_inverse_trend_psmf",min=0,max=24,class="bad") # bad pf error
-    }
-  })
+#   observe({
+#     if (input$etpInversePsmfTrend) {
+#       highlightCells(session,"etp_inverse_trend_psmf",min=75,max=100,class="good") # good pf success
+#       highlightCells(session,"etp_inverse_trend_psmf",min=50,max=74,class="neutral") # neutral pf info blue
+#       highlightCells(session,"etp_inverse_trend_psmf",min=25,max=49,class="warning")
+#       highlightCells(session,"etp_inverse_trend_psmf",min=0,max=24,class="bad") # bad pf error
+#     }
+#   })
   
   #### debugging
   output$debug <- renderText({
