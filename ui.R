@@ -378,7 +378,7 @@ shinyUI(
              header=NULL,
              footer=wellPanel(
                fluidRow(column(4,imageOutput("logo",height="75px"),offset=4,class="center-block")),
-               fluidRow(p(HTML("Copyright &copy; 2014 Softisms LLC.  All rights reserved."),class="row text-center"))
+               fluidRow(p(HTML("Copyright &copy; 2014-2015 Softisms LLC.  All rights reserved."),class="row text-center"))
              ), 
              fluid=TRUE,
              inverse=TRUE,
