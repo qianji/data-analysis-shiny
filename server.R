@@ -35,9 +35,9 @@ shinyServer(function(input, output, session) {
 #   })
 
   load_dataset <- function(){
-    print("loading dataset")
+    # print("loading dataset")
     load("data/group-report.RData",envir=.GlobalEnv)
-    print("returned from load")
+    # print("returned from load")
   }
   
   ### NYSE industry panel
